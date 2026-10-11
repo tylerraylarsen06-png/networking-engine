@@ -8,6 +8,26 @@ against your Do Not Contact list, and writes a personalized cold email draft
 for each one from fixed copywriting templates. You read the drafts, edit
 what you want, and send.
 
+## CareerShift: verified emails from your school's free license
+
+Many universities give students CareerShift for free. `careershift.py` uses your own logged-in
+CareerShift session to search alumni at a firm and pull their emails, with no API key and no
+guessing. CareerShift emails count as verified.
+
+```
+api-anything login app.careershift.com     # once: imports your browser session
+python3 careershift.py --school "University of Southern California" --firm "FOX" --n 20
+python3 careershift.py --school "University of Southern California" --firm "FOX" --n 20 --reveal 5 --out fox.csv
+```
+
+Search is free and returns every alum CareerShift knows at that firm, with the email when it
+is already unlocked for you. `--reveal N` unlocks up to N more, skipping anyone CareerShift has
+no email for. Each reveal uses one daily credit (50 a day on a typical university license), and
+the remaining count is printed after the run. Tested 2026-10-11: a USC-at-FOX search returned
+the firm's alumni, and one reveal returned a verified @fox.com address.
+
+Requires [api-anything](https://github.com/goodnight000/api-anything) for the session import.
+
 ## Setup
 
 ```
@@ -562,9 +582,10 @@ CareerShift, Hunter and ZeroBounce keys, then fills in `profile.json`
 - Exists today: `.env` with `EXA_API_KEY` (required), `HUNTER_API_KEY` and
   `ZEROBOUNCE_API_KEY` (optional, for `--emails`); `profile.json`;
   `dnc.json` with a fail-closed check.
+- Exists today: CareerShift through your own browser session
+  (`careershift.py`, no key needed).
 - Roadmap: a guided `onboard` command that asks for each key and writes
-  `.env` and `profile.json`; CareerShift support (`CAREERSHIFT_API_KEY` is
-  reserved in `.env.example` but not read by the code yet).
+  `.env` and `profile.json`.
 
 **Targeted mode: "find 20 people at Bain".** One firm, a count, and the
 user's school and city as defaults.
@@ -586,9 +607,11 @@ before the application.
 - Exists today: Hunter finds each firm's address pattern once and caches it
   in `patterns.json`; ZeroBounce verifies each constructed address, with a
   quota guard that stops spending on a domain that is clearly wrong.
-- Roadmap: CareerShift as an email source. CareerShift addresses are
-  treated as verified. A "safe" mode adds ZeroBounce verification on top of
-  any source, CareerShift included.
+- Exists today: CareerShift as an email source (`careershift.py`).
+  CareerShift addresses are treated as verified.
+- Roadmap: feed `careershift.py` results straight into `find.py`'s draft
+  step, and a "safe" mode that adds ZeroBounce verification on top of any
+  source, CareerShift included.
 
 **Drafts land in the user's email drafts folder.** The user edits and hits
 send.
