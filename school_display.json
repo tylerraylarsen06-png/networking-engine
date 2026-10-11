@@ -1,0 +1,16 @@
+{
+  "_comment": "How to say a school out loud in a draft. Keys are the FULL names used for matching (case and punctuation ignored). A school not listed here is written out in full, so a missing entry is safe. Override one run with --school-short.",
+  "University of Southern California": "USC",
+  "University of California, Los Angeles": "UCLA",
+  "Massachusetts Institute of Technology": "MIT",
+  "New York University": "NYU",
+  "University of Pennsylvania": "Penn",
+  "Stanford University": "Stanford",
+  "Harvard University": "Harvard",
+  "Columbia University": "Columbia",
+  "Cornell University": "Cornell",
+  "Duke University": "Duke",
+  "Georgetown University": "Georgetown",
+  "Northwestern University": "Northwestern",
+  "University of Michigan": "Michigan"
+}

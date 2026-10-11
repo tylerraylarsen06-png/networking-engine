@@ -1,0 +1,32 @@
+{
+  "non_target_roles": [
+    "Executive Assistant",
+    "Manager, Team Culture and Experience",
+    "Assistant",
+    "Coordinator",
+    "Receptionist",
+    "Administrative",
+    "Temp",
+    "Contractor",
+    "Part-time",
+    "Parttime"
+  ],
+  "leave_indicators": [
+    "Educational Leave",
+    "Leave of Absence",
+    "Sabbatical"
+  ],
+  "different_track_roles": [
+    "BCG X",
+    "Forward Deployed AI Engineer",
+    "Data Scientist",
+    "Lead Data Scientist"
+  ],
+  "temporary_roles": [
+    "Visiting Associate",
+    "Visiting Consultant",
+    "Visiting Scholar",
+    "Visiting Fellow",
+    "Secondment"
+  ]
+}

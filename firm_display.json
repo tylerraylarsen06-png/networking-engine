@@ -1,0 +1,21 @@
+{
+  "_comment": "How to say a firm out loud in a draft. Matching always uses the full name. A firm not listed is written out in full (trailing Inc, LLC, LLP and similar removed), so a missing entry is safe.",
+  "Bain & Company": "Bain",
+  "McKinsey & Company": "McKinsey",
+  "Boston Consulting Group": "BCG",
+  "Deloitte": "Deloitte",
+  "Deloitte Consulting": "Deloitte",
+  "Deloitte Consulting LLP": "Deloitte",
+  "Deloitte Touche Tohmatsu": "Deloitte",
+  "PricewaterhouseCoopers": "PwC",
+  "Ernst & Young": "EY",
+  "Goldman Sachs": "Goldman",
+  "JPMorgan Chase": "JPMorgan",
+  "JPMorgan Chase & Co.": "JPMorgan",
+  "Cornerstone Research": "Cornerstone",
+  "Charles River Associates": "CRA",
+  "L.E.K. Consulting": "L.E.K.",
+  "Oliver Wyman": "Oliver Wyman",
+  "Accenture": "Accenture",
+  "Kearney": "Kearney"
+}

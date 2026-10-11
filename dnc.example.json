@@ -1,0 +1,21 @@
+{
+ "version": 1,
+ "entries": [
+  {
+   "id": "d001",
+   "name": "Jane Doe",
+   "firm": "Example Corp",
+   "org": false,
+   "tier": "never_relationship",
+   "reason": "example entry, replace with your own",
+   "emails": [
+    "jane.doe@example.com"
+   ],
+   "linkedin": [
+    "in/jane-doe-example"
+   ],
+   "added": "2026-01-01",
+   "source": "example"
+  }
+ ]
+}

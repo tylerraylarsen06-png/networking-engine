@@ -1,0 +1,16 @@
+{
+  "delta omega": {
+    "variants": [
+      "Delta Omega",
+      "Delta O",
+      "D Omega"
+    ],
+    "greek_variants": [
+      "ΔΩ",
+      "Δ Ω"
+    ],
+    "exclude": [
+      "Phi Delta Omega"
+    ]
+  }
+}

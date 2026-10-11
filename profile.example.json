@@ -1,0 +1,18 @@
+{
+  "_comment": "Copy to profile.json (gitignored) and replace every value with your own. Leave a field out to never use that template. See sender_profile.py for what each field does.",
+  "name": "Alex Example",
+  "school": "USC",
+  "year": "sophomore",
+  "industry": "consulting",
+  "signature": "",
+  "high_school": "Lincoln High School",
+  "high_school_short": "Lincoln",
+  "major": "Economics",
+  "major_long": "Economics (Business track)",
+  "home_city": "Chicago",
+  "home_area": "Chicago",
+  "orgs": [
+    {"name": "Example Investing Club", "match": ["Example Investing Club", "USC Example Investing Club"]},
+    {"name": "Sample Consulting Group", "match": ["Sample Consulting Group", "Sample Consulting Group at USC"]}
+  ]
+}
