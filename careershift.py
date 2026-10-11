@@ -126,6 +126,12 @@ def lookup(school, firm, n=20, reveal_n=0):
     return rows, credits
 
 
+def _csv_safe(v):
+    """Keep a scraped name or title like "=HYPERLINK(...)" from running as a formula in Excel or Sheets."""
+    s = "" if v is None else str(v)
+    return "'" + s if s[:1] in ("=", "+", "-", "@", "\t", "\r") else s
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--school", required=True)
@@ -143,7 +149,7 @@ def main(argv=None):
         with open(a.out, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else ["name"])
             w.writeheader()
-            w.writerows(rows)
+            w.writerows({k: _csv_safe(v) for k, v in r.items()} for r in rows)
         print(f"wrote {len(rows)} rows to {a.out}")
     else:
         print(json.dumps(rows, indent=1))

@@ -66,5 +66,13 @@ class CareerShiftTest(unittest.TestCase):
         self.assertEqual(fake.posts, [])
 
 
+class CsvSafeTest(unittest.TestCase):
+    def test_formula_prefixes_are_neutralized(self):
+        self.assertEqual(careershift._csv_safe("=HYPERLINK(1)"), "'=HYPERLINK(1)")
+        self.assertEqual(careershift._csv_safe("@SUM(A1)"), "'@SUM(A1)")
+        self.assertEqual(careershift._csv_safe("Analyst"), "Analyst")
+        self.assertEqual(careershift._csv_safe(None), "")
+
+
 if __name__ == "__main__":
     unittest.main()
