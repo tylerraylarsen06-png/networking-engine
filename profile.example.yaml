@@ -18,6 +18,7 @@ clubs:
   - name: Example AI Club
     what_i_do: run an AI club that does AI marketing for companies
     advice_on: doing AI marketing
+    question: how much I should lean into AI in my marketing applications   # optional: your real question for them
     topics: [marketing, growth, brand, ai, product]
     fits: [any]
   - name: Example Investing Club

@@ -12,7 +12,7 @@ MAX_BODY_WORDS = 90
 MIN_SENTENCES, MAX_SENTENCES = 3, 4
 
 CLOSE = "Would you have 15 minutes in the next couple weeks?"
-INTERESTING = "which is really interesting to me"
+DEFAULT_QUESTION = "how much I should lean into that in my applications"
 
 # U+2010 to U+2015 and U+2212: every dash-like character except the ASCII hyphen inside a word.
 DASH_CHARS = "‐‑‒–—―−"
@@ -22,6 +22,8 @@ BANNED = [
     (re.compile(r"\bI saw\b", re.I), '"I saw"'),
     (re.compile(r"\bI found your profile\b", re.I), '"I found your profile"'),
     (re.compile(r"\bday[\s-]to[\s-]day\b", re.I), '"day to day"'),
+    # Tyler, 2026-10-11: reads as filler on every message it touches.
+    (re.compile(r"\breally interesting to me\b", re.I), '"really interesting to me"'),
 ]
 # The career-path recital: "after X and Y", "you went from X to Y", "before joining X".
 CAREER_PATH_RES = [
@@ -214,13 +216,18 @@ def compose(profile, recipient, hook, recipient_clause=None, fact=None):
     item = hook["item"]
     sentences = [intro_sentence(profile, fact)]
     if hook["kind"] == "work":
+        # Advice angle: say what you do, name their specific work, ask their opinion on a real
+        # question from your own situation. Tyler preferred this over "which is interesting to me".
         clause = (recipient_clause or template_recipient_clause(recipient, hook)).strip().rstrip(".,")
-        sentences.append(f"I {str(item['what_i_do']).strip().rstrip('.')}, and {clause}, {INTERESTING}.")
-        sentences.append(f"I'd love any tips you have for someone {str(item['advice_on']).strip().rstrip('.')} like me.")
+        question = str(item.get("question") or DEFAULT_QUESTION).strip().rstrip(".?")
+        sentences.append(f"I {str(item['what_i_do']).strip().rstrip('.')}, and {clause}.")
+        sentences.append(f"I'd love your opinion on {question} and any advice for someone "
+                         f"{str(item['advice_on']).strip().rstrip('.')} like me.")
     else:
         ind = str(item["industry"]).strip()
-        sentences.append(f"I'm hoping to start working with {ind} clients, and you're at one of the top {ind} companies.")
-        sentences.append("I'd love any advice for someone trying to break in.")
+        clause = template_recipient_clause(recipient, {"topic": ind}).strip()
+        sentences.append(f"I'm hoping to start working with {ind} clients, and {clause}.")
+        sentences.append(f"I'd love any advice on how someone like me could land {ind} clients.")
     sentences.append(CLOSE)
     sender_first = profile.get("first_name") or first_name(profile["name"])
     body = f"Hi {first_name(recipient['name'])},\n\n{' '.join(sentences)}\n\nThanks,\n{sender_first}"

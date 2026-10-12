@@ -5,33 +5,39 @@ This is the method `outreach.py` follows when it writes a networking message. Th
 
 ## The idea
 
-You are not a curious student asking someone to explain their job. You are someone doing similar
-work who wants advice from a person who is better at it. People like talking about their
-specialty, so the message aims at it.
+You are not a curious student asking someone to explain their job. You are someone doing related
+work who wants a specific opinion from a person who knows more. Ask about a real question from
+your own situation, such as how much to lean into an AI background when applying to their field.
+People like giving advice on their specialty, so aim the question at it.
 
 ## Shape
 
 One flowing message, three to four sentences, under about 90 words.
 
 1. Intro: "I'm a [school] [year] studying [major]."
-2. Peer link: What you actually do that matches their specialty, then what they do, then why
-   it interests you. Example: "I run an AI club that does AI marketing for companies, and you're
-   using AI to market audiobooks at a huge scale, which is really interesting to me."
-3. Ask: "I'd love any tips you have for someone [doing that same work] like me." One ask only.
+2. Link: what you actually do, then their specific work. Example: "I run an AI club that does AI
+   marketing for companies, and you're using AI to market audiobooks at a huge scale."
+3. Ask: "I'd love your opinion on [your real question] and any advice for someone [doing that
+   work] like me." One ask only. Set `question` on a profile item to make it specific.
 4. Close: "Would you have 15 minutes in the next couple weeks?"
 
 The message opens with "Hi [first name]," and signs off with "Thanks," and your first name on the
-next line.
+next line. Never write "which is really interesting to me": it says nothing.
+
+Match the question to the field. Asking whether AI fluency helps makes sense for consulting,
+private equity, corporate development, product and marketing. It does not for investment banking,
+where the honest answer is to know your technicals. Ask banking contacts about recruiting instead.
 
 ## When you have no matching work
 
-Fall back to an aspiration, and only one that is true for you:
+Only for people who already work with clients in that industry (partnerships, business
+development, consulting for it), fall back to a true aspiration:
 
-"I'm hoping to start working with [industry] clients, and you're at one of the top [industry]
-companies. I'd love any advice for someone trying to break in."
+"I'm hoping to start working with [industry] clients, and you work on [industry] at [company]. I'd
+love any advice on how someone like me could land [industry] clients."
 
-If the profile has no club, job or aspiration that honestly fits the person, the tool skips them.
-It does not stretch a hook to fit.
+If the profile has nothing that honestly fits the person, the tool skips them. It does not
+stretch a hook to fit.
 
 ## Truth
 

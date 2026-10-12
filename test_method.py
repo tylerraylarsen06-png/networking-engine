@@ -19,8 +19,8 @@ PROFILE = {
 }
 
 GOOD = ("Hi Jamie,\n\nI'm an Example State sophomore studying economics. I run an AI club that does AI "
-        "marketing for companies, and you work on marketing at Examplecorp, which is really interesting to me. "
-        "I'd love any tips you have for someone doing AI marketing like me. Would you have 15 minutes in the "
+        "marketing for companies, and you work on marketing at Examplecorp. I'd love your opinion on how much I "
+        "should lean into that in my applications and any advice for someone doing AI marketing like me. Would you have 15 minutes in the "
         "next couple weeks?\n\nThanks,\nAlex")
 SUBJECT = "Example State sophomore with a question"
 
@@ -35,6 +35,10 @@ def swap(old, new):
 
 
 class CheckerRules(unittest.TestCase):
+    def test_really_interesting_banned(self):
+        body = swap("at Examplecorp.", "at Examplecorp, which is really interesting to me.")
+        self.assertTrue(any("really interesting" in v for v in check(body)))
+
     def test_good_message_passes(self):
         self.assertEqual(check(GOOD), [])
 
@@ -51,19 +55,19 @@ class CheckerRules(unittest.TestCase):
         self.assertTrue(any("sign off" in v for v in check(swap("Thanks,\nAlex", "Thanks,\nAlex Example"))))
 
     def test_em_dash(self):
-        self.assertTrue(any("dash character" in v for v in check(swap(", which is", " — which is"))))
+        self.assertTrue(any("dash character" in v for v in check(swap(", and you work", " — and you work"))))
 
     def test_en_dash(self):
-        self.assertTrue(any("dash character" in v for v in check(swap(", which is", " – which is"))))
+        self.assertTrue(any("dash character" in v for v in check(swap(", and you work", " – and you work"))))
 
     def test_spaced_hyphen(self):
-        self.assertTrue(any('" - "' in v for v in check(swap(", which is", " - which is"))))
+        self.assertTrue(any('" - "' in v for v in check(swap(", and you work", " - and you work"))))
 
     def test_hyphen_inside_word_is_fine(self):
         self.assertEqual(check(swap("AI club", "AI-first club")), [])
 
     def test_rather(self):
-        self.assertTrue(any('"rather"' in v for v in check(swap("really interesting", "rather interesting"))))
+        self.assertTrue(any('"rather"' in v for v in check(swap("how much I", "rather how much I"))))
 
     def test_i_saw(self):
         self.assertTrue(any('"I saw"' in v for v in check(swap("I run an AI club", "I saw you work there and I run an AI club"))))
@@ -103,7 +107,7 @@ class CheckerRules(unittest.TestCase):
 
     def test_word_cap(self):
         long = " ".join(["really"] * 60)
-        body = swap("really interesting to me", f"{long} interesting to me")
+        body = swap("you work on marketing at Examplecorp", f"you work on {long} at Examplecorp")
         self.assertTrue(any("words" in v for v in check(body)))
 
     def test_too_many_sentences(self):
@@ -120,7 +124,7 @@ class CheckerRules(unittest.TestCase):
         self.assertTrue(any("more than one ask" in v for v in check(body)))
 
     def test_other_target_company(self):
-        body = swap("which is really", "like Example Media does, which is really")
+        body = swap("at Examplecorp.", "at Examplecorp like Example Media does.")
         self.assertTrue(any("another company" in v for v in check(body, others=["Example Media"])))
 
     def test_clause_checks(self):
