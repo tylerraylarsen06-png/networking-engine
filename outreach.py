@@ -251,7 +251,20 @@ def select_people(candidates, profile, role, n, industry, dnc_entries, contacted
         p = dict(p, _hook=hook, _score=method.relevance(p.get("title"), role, topics))
         chosen.append(p)
     chosen.sort(key=lambda p: (-p["_score"], 0 if p.get("email") else 1, p.get("name") or ""))
-    return chosen[:n], skipped
+    # One pitch per hook per company: colleagues compare notes, and two identical asks read as a
+    # mail merge. Re-pick each person's hook around the ones already used; skip anyone left over.
+    picked, used = [], {}
+    for p in chosen:
+        if len(picked) >= n:
+            break
+        co = _norm(p.get("company"))
+        hook = method.pick_hook(profile, p, industry, exclude=used.get(co, set()))
+        if not hook:
+            skipped.append((p, "every true hook that fits is already used for someone at this company"))
+            continue
+        used.setdefault(co, set()).add(method.hook_name(hook["item"]))
+        picked.append(dict(p, _hook=hook))
+    return picked, skipped
 
 
 def reveal_emails(people, source, budget, dnc_entries):

@@ -122,8 +122,22 @@ class Selection(unittest.TestCase):
         people = [person("Avery Smith", "Software Development Engineer"), person("Casey Jones", "Technical Recruiter"),
                   person("Jamie Doe", "Brand Manager"), person("Riley Roe", "Senior Product Marketing Manager")]
         chosen, skipped = outreach.select_people(people, PROFILE, "Product Management Intern", 3, "", [], FakeContacted())
-        self.assertEqual([p["name"] for p in chosen], ["Riley Roe", "Jamie Doe"])
-        self.assertEqual(len(skipped), 2)
+        # Jamie's only true hook is the one Riley already got at the same company, so Jamie is skipped.
+        self.assertEqual([p["name"] for p in chosen], ["Riley Roe"])
+        self.assertEqual(len(skipped), 3)
+
+    def test_two_people_at_one_company_never_get_the_same_hook(self):
+        people = [person("Riley Roe", "Senior Product Marketing Manager"),
+                  person("Jamie Doe", "Brand Manager"),
+                  person("Sam Lee", "Brand Manager", company="Othercorp")]
+        chosen, skipped = outreach.select_people(people, PROFILE, "Product Management Intern", 3, "", [], FakeContacted())
+        by_co = {}
+        for p in chosen:
+            by_co.setdefault(p["company"], []).append(method.hook_name(p["_hook"]["item"]))
+        for hooks in by_co.values():
+            self.assertEqual(len(hooks), len(set(hooks)))
+        self.assertIn("Sam Lee", [p["name"] for p in chosen])  # same hook is fine at a different company
+        self.assertIn("Jamie Doe", [p["name"] for p, _ in skipped])
 
     def test_merge_by_name_fills_email(self):
         merged = outreach.merge_people([person("Jamie Doe", "Brand Manager", linkedin_url="https://linkedin.com/in/x")],
@@ -201,10 +215,12 @@ class FullRun(unittest.TestCase):
     def _run(self, **kw):
         exa = lambda company, school, n, city: [person("Riley Roe", "Senior Product Marketing Manager",
                                                        context="Leads product marketing.", linkedin_url="https://www.linkedin.com/in/riley-roe-example")]
-        cs = FakeCareerShift([person("Jamie Doe", "Brand Manager", source="careershift", careershift_id="c1", has_email=True),
+        # Jamie's title matches a different true hook than Riley's, since one company never gets one pitch twice.
+        cs = FakeCareerShift([person("Jamie Doe", "Equity Research Analyst", source="careershift", careershift_id="c1", has_email=True),
                               person("Casey Jones", "Recruiter", source="careershift", careershift_id="c2", has_email=True)])
         log = FakeContacted()
         service = kw.pop("service", None)
+        kw.setdefault("industry", "finance")
         a = args(profile=str(self.profile), **kw)
         drafts, skipped = outreach.run(a, exa_fn=exa, careershift=cs, claude=None, gmail_service=service,
                                        dnc_entries=[], contacted=log, out_dir=self.tmp / "out")

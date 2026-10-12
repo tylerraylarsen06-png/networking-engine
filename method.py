@@ -132,17 +132,20 @@ def pick_fact(profile, tags):
     return None
 
 
-def pick_hook(profile, recipient, industry=""):
+def pick_hook(profile, recipient, industry="", exclude=()):
     """The sender's best true peer link to this recipient.
 
     Returns {"kind": "work", "item": club_or_job, "topic": matched_topic} when a club or job the
     sender really does matches a word in the recipient's title, else {"kind": "aspiration", ...} when
-    the profile has a true aspiration for this industry, else None (skip the person)."""
+    the profile has a true aspiration for this industry, else None (skip the person).
+    `exclude` holds hook names already used at this company, so two people there never get the same pitch."""
     tags = recipient_tags(recipient, industry)
     title = recipient.get("title") or ""
     best, best_score, best_topic = None, 0, None
     for item in list(profile.get("clubs") or []) + list(profile.get("past_work") or []):
         if not (item.get("what_i_do") and item.get("advice_on")) or not fits(item, tags):
+            continue
+        if hook_name(item) in exclude:
             continue
         matched = [t for t in item.get("topics") or [] if _has(title, t)]
         if len(matched) > best_score:
@@ -152,9 +155,13 @@ def pick_hook(profile, recipient, industry=""):
     if best:
         return {"kind": "work", "item": best, "topic": best_topic}
     for asp in profile.get("aspirations") or []:
-        if asp.get("industry") and fits(asp, tags):
+        if asp.get("industry") and fits(asp, tags) and hook_name(asp) not in exclude:
             return {"kind": "aspiration", "item": asp, "topic": None}
     return None
+
+
+def hook_name(item):
+    return str(item.get("name") or item.get("industry") or item.get("what_i_do") or "").strip().lower()
 
 
 def hook_label(hook, fact=None):
