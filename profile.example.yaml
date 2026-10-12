@@ -1,0 +1,48 @@
+# Copy to profile.yaml (gitignored) and replace every value with your own TRUE facts.
+# The drafter only uses what is written here. It never invents a club, a job or a number.
+# Write years and roles in words ("sophomore"), since messages may not carry numbers about you.
+
+name: Alex Example
+first_name: Alex                         # how you sign off
+school: Example State University         # full name, used for alumni search
+school_short: Example State              # how you say it in a message
+year: sophomore
+major: economics
+
+# Clubs and jobs: what you actually do there.
+#   what_i_do  finishes "I ..." in the peer link sentence
+#   advice_on  finishes "I'd love any tips you have for someone ... like me."
+#   topics     words in a recipient's title that make this the right link
+#   fits       optional: industries, companies or cities where this applies ("any" or empty means everywhere)
+clubs:
+  - name: Example AI Club
+    what_i_do: run an AI club that does AI marketing for companies
+    advice_on: doing AI marketing
+    topics: [marketing, growth, brand, ai, product]
+    fits: [any]
+  - name: Example Investing Club
+    what_i_do: pitch stocks in a student investing club
+    advice_on: learning to pitch stocks
+    topics: [investment, investing, equity, research, portfolio]
+    fits: [finance, banking, asset management]
+
+past_work:
+  - name: Example Coffee Co. summer job
+    what_i_do: ran social media for a local coffee shop last summer
+    advice_on: building a brand on social
+    topics: [social, content, community]
+    fits: [consumer, media, retail]
+
+# Used only when no club or job matches the person. Keep it true.
+aspirations:
+  - industry: media
+    fits: [media, entertainment, streaming]
+
+# Optional extra line in the intro, only for recipients on its fits list. Fits is required here.
+notable_facts:
+  - name: stadium crew
+    text: worked on the field crew at a college bowl game
+    fits: [sports, media, los angeles]
+
+# Companies you are targeting. A message never names one of these unless it is the recipient's own company.
+targets: [Example Media, Example Bank]

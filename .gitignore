@@ -6,11 +6,20 @@ dnc.json
 dnc-exclusions.log
 profile.json
 *.csv
+!data/do_not_contact.example.csv
 paste_lists/
 ledger.json
 *ledger*.json
 sent*.log
 *.ledger
+
+# Networking drafts: personal profile, lists, output and Gmail OAuth files
+profile.yaml
+data/do_not_contact.csv
+data/contacted.csv
+out/
+gmail_credentials.json
+gmail_token.json
 
 # Python
 __pycache__/

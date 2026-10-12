@@ -28,6 +28,71 @@ the firm's alumni, and one reveal returned a verified @fox.com address.
 
 Requires [api-anything](https://github.com/goodnight000/api-anything) for the session import.
 
+## Networking drafts (`drafts.py`)
+
+One command goes from a company and a posting to reviewed drafts in your Gmail:
+
+```
+python3 drafts.py --company "Amazon" --role "Product Management Intern" \
+    --school "University of Southern California" --n 3
+```
+
+What it does, in order:
+
+1. **Finds people.** Exa people search and CareerShift alumni search run for the company, and
+   the results merge by name, so a CareerShift email lands on the matching Exa profile. Either
+   source can be missing: no `EXA_API_KEY` or no CareerShift session just skips that source.
+2. **Keeps the right titles.** A business posting skips engineers. Every posting skips
+   recruiters, lawyers and administrative staff. A technical posting (engineer, developer, data science)
+   keeps engineers. People whose titles share words with the posting rank first.
+3. **Checks two lists before writing anything.** `data/do_not_contact.csv`, which must exist before anything runs, and `data/contacted.csv`, the log of everyone this command already drafted for. The
+   older `dnc.json` and `ledger.json` are honored too when they exist.
+4. **Spends CareerShift credits only when asked.** `--reveal N` unlocks at most N emails, and only
+   for people who already passed every check. A revealed address is checked against Do Not
+   Contact again.
+5. **Writes one message each** by the method in [METHOD.md](METHOD.md), filled from
+   `profile.yaml`. With `ANTHROPIC_API_KEY` set, Claude (`claude-sonnet-5-5`) writes only the
+   clause about the recipient's work. The full message then runs through the checker in
+   `method.py`, and the template takes over when the clause fails or when no key is set. A person
+   with no true hook in your profile is skipped, not stretched.
+6. **Saves drafts, never sends.** With Gmail set up, each message becomes a Gmail draft. Every run
+   also writes `out/drafts_<company>_<date>.md` and a CSV next to it.
+7. **Prints a review table:** name, title, email, hook, then each full message.
+
+Setup:
+
+```
+pip3 install -r requirements.txt
+cp profile.example.yaml profile.yaml          # your true facts: clubs, work, aspirations
+cp data/do_not_contact.example.csv data/do_not_contact.csv   # people never to message
+```
+
+Flags: `--industry media` matches the `fits` lists in your profile, `--city` narrows the Exa
+search, `--no-gmail` and `--no-claude` force the local file and the template, `--no-log` leaves
+`data/contacted.csv` alone.
+
+### The profile is the only source of facts about you
+
+Each club and job in `profile.yaml` says what you actually do there (`what_i_do`), what you want
+tips on (`advice_on`), and which words in a recipient's title make it the right link (`topics`).
+`aspirations` covers people no club or job matches. `notable_facts` only appear for recipients
+whose industry, company or city is on the fact's `fits` list. `targets` lists other companies you
+are going after, so a message never names one of them. `profile.yaml` is gitignored.
+
+### Gmail drafts
+
+Gmail is optional. Without it, the Markdown file and the CSV are the output. To turn it on:
+
+1. In [Google Cloud Console](https://console.cloud.google.com/), create a project, enable the
+   Gmail API, and set up the OAuth consent screen as "External" in testing mode with your own
+   address as a test user.
+2. Create an OAuth client ID of type "Desktop app" and download its JSON as
+   `gmail_credentials.json` in this folder.
+3. Run `python3 gmail_drafts.py --setup`, sign in, and approve. That writes `gmail_token.json`.
+
+The only scope requested is `gmail.compose`, and the only call made is `users.drafts.create`.
+There is no code path that sends mail. Both JSON files are gitignored and never printed.
+
 ## Setup
 
 ```
@@ -154,7 +219,7 @@ and the confirmed-affiliation count per firm so you can see the real yield.
 Adds a `seniority_band` column (`below` / `in_band` / `above` / `incoming` /
 `excluded_role`) and a separate `total_experience_years` column, and sorts
 `in_band` rows first (within each tier, if `--org` is used). Defaults to a
-2–5 year band, overridable:
+2 to 5 year band, overridable:
 
 ```
 python3 find.py --school "..." --firm "..." --min-seniority 1 --max-seniority 3
@@ -472,7 +537,7 @@ people who will never be emailed. Adds 5 columns, blank for everyone else:
 | `email` | the one address constructed from the firm's cached **mail_domain**: never a list of guesses |
 | `email_status` | ZeroBounce's status **verbatim**: `valid`, `invalid`, `catch-all`, `unknown`, `spamtrap`, `abuse`, `do_not_mail`: or `invalid_possible_collision` (see below). Never collapsed into a binary valid/invalid |
 | `email_pattern_confidence` | the firm's cached pattern confidence (Hunter's avg per-email confidence across its sample) |
-| `draft_subject` / `draft_body` | string-templated (no model calls), only for tiers 1–3 (tier 4 has no valid hook, so no draft) |
+| `draft_subject` / `draft_body` | string-templated (no model calls), only for tiers 1 to 3 (tier 4 has no valid hook, so no draft) |
 
 **Pattern cache (`patterns.json`)** is the compounding asset: `firm ->
 {web_domain, mail_domain, pattern, confidence, how_confirmed, date}`. Every
@@ -609,8 +674,9 @@ before the application.
   quota guard that stops spending on a domain that is clearly wrong.
 - Exists today: CareerShift as an email source (`careershift.py`).
   CareerShift addresses are treated as verified.
-- Roadmap: feed `careershift.py` results straight into `find.py`'s draft
-  step, and a "safe" mode that adds ZeroBounce verification on top of any
+- Exists today: `drafts.py` feeds CareerShift and Exa results straight into
+  drafts for one company.
+- Roadmap: a "safe" mode that adds ZeroBounce verification on top of any
   source, CareerShift included.
 
 **Drafts land in the user's email drafts folder.** The user edits and hits
@@ -619,8 +685,9 @@ send.
   (`draft_subject`, `draft_body`); `show_drafts.py` prints them for review;
   the optional Google Sheet sender (`bridge.py` plus the Apps Script in
   `sender/`) queues and paces sends from Gmail with a kill switch on bounces.
-- Roadmap: create each draft directly in the user's Gmail or Outlook
-  drafts folder instead of a CSV.
+- Exists today: `drafts.py` creates each draft directly in the user's Gmail
+  drafts folder. It asks for the `gmail.compose` scope and only creates drafts.
+- Roadmap: Outlook drafts.
 
 **Send confirmation mode.** Every send needs an explicit approval, and the
 mode stays ON until the user has approved the copy a few times. Only then
@@ -636,8 +703,9 @@ can it be turned off.
   `www.` vs. non-`www.`), then by normalized (name, firm), the same person
   can come back under two different URL formats that don't collapse via the
   first pass.
-- Never scrapes LinkedIn directly and uses no browser automation, Exa's API
-  is the only data source.
+- Never scrapes LinkedIn directly and uses no browser automation. People come
+  from Exa's API and, for `careershift.py` and `drafts.py`, CareerShift's API
+  through your own session.
 - `.env` is gitignored; the API key is never printed.
 - Output CSVs are gitignored too, since they contain real people's data , 
   commit them yourself if you actually want a CSV under version control.

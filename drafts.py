@@ -195,3 +195,10 @@ def render_followup(recipient_first_name, firm, sender_first_name, original_subj
     if violations:
         raise DraftContentError(f"generated follow-up violated content rules: {violations}")
     return subject, body
+
+
+if __name__ == "__main__":
+    # The networking drafts command lives in outreach.py; this keeps `python3 drafts.py ...` working.
+    import sys
+    import outreach
+    sys.exit(outreach.main())

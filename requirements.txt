@@ -1,1 +1,7 @@
 requests>=2.31
+pyyaml>=6.0
+# Optional: Claude for the recipient clause in drafts.py
+anthropic>=0.40
+# Optional: Gmail drafts (gmail_drafts.py)
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.1
